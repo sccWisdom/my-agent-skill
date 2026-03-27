@@ -51,10 +51,17 @@ def is_read_only(sql: str) -> Tuple[bool, str]:
 
 
 def ensure_limit(sql: str, limit: int) -> Tuple[str, bool]:
-    text = clean_sql(sql)
+    text = clean_sql(sql).rstrip(";").strip()
     if re.search(r"\blimit\b", text, flags=re.I):
         return text, False
     return f"{text} LIMIT {limit}", True
+
+
+def sql_for_display(sql: str) -> str:
+    s = (sql or "").strip()
+    if not s:
+        return ""
+    return s
 
 
 def parse_mysql_tsv(stdout: str) -> Tuple[List[str], List[List[Any]]]:
@@ -450,6 +457,7 @@ def main() -> int:
             "chart_url": "",
             "chart_reason": "",
             "query_status": "blocked",
+            "sql_query": sql_for_display(args.sql),
             "sql_executed": clean_sql(args.sql),
             "limited": False,
         }
@@ -477,6 +485,7 @@ def main() -> int:
             "chart_url": "",
             "chart_reason": "",
             "query_status": "error",
+            "sql_query": sql_for_display(args.sql),
             "sql_executed": sql_exec,
             "limited": limited,
         }
@@ -502,6 +511,7 @@ def main() -> int:
         "chart_url": chart_url,
         "chart_reason": chart.get("reason", ""),
         "query_status": "success",
+        "sql_query": sql_for_display(args.sql),
         "sql_executed": sql_exec,
         "limited": limited,
     }
