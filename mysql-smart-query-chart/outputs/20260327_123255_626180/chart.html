@@ -1,0 +1,55 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { margin: 0; padding: 16px; background: #ffffff; }
+    .wrap { width: min(1200px, 100%); margin: 0 auto; }
+    canvas { width: 100%; height: 560px !important; }
+    .empty { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; color: #4b5563; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <canvas id="chart"></canvas>
+  </div>
+  <script>
+    const labels = ["2026-03-01", "2026-03-02", "2026-03-03"];
+    const values = [12.0, 18.0, 16.0];
+    const chartType = "line";
+    const hasData = labels.length > 0 && values.length > 0;
+    if (hasData) {
+      new Chart(document.getElementById('chart'), {
+        type: chartType,
+        data: {
+          labels,
+          datasets: [{
+            label: 'value',
+            data: values,
+            backgroundColor: ['#7cb9e8','#88d498','#f4b183','#c3aed6','#f7e28b','#9fd3c7'],
+            borderColor: '#3b82f6',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.25
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          plugins: { legend: { display: true } },
+          scales: chartType === 'pie' ? {} : { y: { beginAtZero: true } }
+        }
+      });
+    } else {
+      const msg = document.createElement('p');
+      msg.className = 'empty';
+      msg.innerText = 'No chart generated for current result.';
+      document.getElementById('chart').replaceWith(msg);
+    }
+  </script>
+</body>
+</html>
